@@ -1,4 +1,5 @@
 using UnityEngine;
+using System.Collections;
 using UnityEngine.SceneManagement; // Scene geçişleri için
 using UnityEngine.UI;  // UI elemanlarıyla etkileşim için
 
@@ -38,8 +39,21 @@ public class MainMenu : MonoBehaviour
     // Play butonuna tıklanırsa oyun sahnesine geçiş yapacak
     public void OnPlayButtonClicked()
     {
-        SceneManager.LoadScene("GameScene"); // GameScene, oyununuzun sahnesinin adı
+        Time.timeScale = 1; 
+        StartCoroutine(LoadGameSceneAsync());
     }
+
+    private IEnumerator LoadGameSceneAsync()
+    {
+        AsyncOperation asyncLoad = SceneManager.LoadSceneAsync("GameScene");
+        while (!asyncLoad.isDone)
+        {
+            yield return null;
+        }
+        // Sahne tamamen yüklendiğinde oyun başlatılabilir.
+        PlatformSpawner.isGameStarted = true;
+    }
+
 
     // Settings butonuna tıklanırsa ayarlar panelini açacak
     public void OnSettingsButtonClicked()
