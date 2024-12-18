@@ -6,6 +6,7 @@ using UnityEngine;
 
 public class PlatformSpawner : MonoBehaviour
 {
+    public static bool isGameStarted = false;
     public GameObject platformPrefab;
     public GameObject rockPrefab;
     public GameObject backgroundPrefab;
@@ -36,8 +37,15 @@ public class PlatformSpawner : MonoBehaviour
 
     private string currentMathQuestion;
     private int correctAnswer;
-   
 
+    private void Awake()
+    {
+        if (!isGameStarted)
+        {
+            Start();
+            isGameStarted = true;
+        }
+    }
 
     void Start()
     {

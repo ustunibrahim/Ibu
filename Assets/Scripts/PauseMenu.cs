@@ -1,5 +1,5 @@
 using UnityEngine;
-
+using UnityEngine.SceneManagement; // Scene geçişleri için
 public class PauseMenu : MonoBehaviour
 {
     public GameObject pauseMenuPanel; // Menü paneli
@@ -28,6 +28,12 @@ public class PauseMenu : MonoBehaviour
         isPaused = false;
         Time.timeScale = 1; // Oyunu devam ettir
         pauseMenuPanel.SetActive(false); // Menüyü gizle
+    }
+
+    public void MainMenu()
+    {
+        Time.timeScale = 1; // Oyunu devam ettir
+        SceneManager.LoadScene("Menu");
     }
 
     // Quit butonuna tıklanınca çağrılır (opsiyonel)
