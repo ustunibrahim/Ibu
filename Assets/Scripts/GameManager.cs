@@ -1,10 +1,10 @@
 using UnityEngine;
-using TMPro; // TextMeshPro kütüphanesini ekle
+using UnityEngine.UI;
 
 public class GameManager : MonoBehaviour
 {
     public static GameManager instance; // Singleton referansı
-    public TMP_Text scoreText; // TextMeshPro UI bileşeni
+    public Text scoreText;
     private int score = 0; // Başlangıç skoru
 
     void Awake()

@@ -147,25 +147,35 @@ public class PlatformSpawner : MonoBehaviour
 
         switch (operation)
         {
-            case 0:
+            case 0: // Toplama
                 currentMathQuestion = $"{a} + {b}";
                 correctAnswer = a + b;
                 break;
-            case 1:
+            case 1: // Çıkarma
+                    // Çıkarmada negatif sonuçları engellemek için b'yi a'dan büyük yapmamız gerekebilir
+                if (a < b)
+                {
+                    int temp = a;
+                    a = b;
+                    b = temp;
+                }
                 currentMathQuestion = $"{a} - {b}";
                 correctAnswer = a - b;
                 break;
-            case 2:
+            case 2: // Çarpma
                 currentMathQuestion = $"{a} x {b}";
                 correctAnswer = a * b;
                 break;
-            case 3:
-                b = Mathf.Max(1, b);
-                currentMathQuestion = $"{a * b} ÷ {b}";
-                correctAnswer = a;
+            case 3: // Bölme
+                    // Bölme işlemi için a, b ile tam bölünebilir olmalı
+                b = Mathf.Max(1, b); // b'nin 0 olmasını engellemek için
+                a = b * Random.Range(1, 10); // b ile tam bölünecek a değeri üretelim
+                currentMathQuestion = $"{a} ÷ {b}";
+                correctAnswer = a / b;
                 break;
         }
     }
+
 
     void AttachMathQuestionToCloud(GameObject cloud)
     {
@@ -219,14 +229,16 @@ public class PlatformSpawner : MonoBehaviour
         List<int> answers = new List<int> { correctAnswer };
         while (answers.Count < 3)
         {
+            // Yanlış cevapların negatif olmaması için kontrol ekliyoruz
             int wrongAnswer = Random.Range(correctAnswer - 10, correctAnswer + 10);
-            if (!answers.Contains(wrongAnswer))
+            if (wrongAnswer >= 0 && !answers.Contains(wrongAnswer)) // Yanlış cevap negatif olmasın
             {
                 answers.Add(wrongAnswer);
             }
         }
         return ShuffleList(answers);
     }
+
 
     void AttachAnswerToBalloon(GameObject balloon, int answer)
     {
