@@ -4,10 +4,9 @@ using UnityEngine.EventSystems;
 
 public class KarakterHareketi : MonoBehaviour
 {
-    public float hiz = 5f;  // Karakterin normal hızı
-    public float ziplamaGucu = 5f; // Zıplama gücü
+    public float hiz = 4f;  // Karakterin normal hızı
+    public float ziplamaGucu = 6f; // Zıplama gücü
     private bool yerleTemas = false; // Karakterin yerle temas halinde olup olmadığını kontrol eder
-    private bool doubleJumpYapilabilir = false; // Double jump kontrolü
     private float orijinalHiz; // Karakterin normal hızını saklar
     private bool hizDegisiyor = false; // Hızın geçici olarak değiştiğini kontrol eder
     private Rigidbody2D rb;
@@ -33,13 +32,9 @@ public class KarakterHareketi : MonoBehaviour
         // Ekrana tıklama kontrolü
         if ((Input.touchCount > 0 || Input.GetMouseButtonDown(0)) && !IsClickingOnUI())
         {
-            if (yerleTemas) // Yerdeyken birinci zıplama
+            if (yerleTemas) // Yerdeyken zıplama
             {
                 Jump();
-            }
-            else if (doubleJumpYapilabilir) // Havada iken ikinci zıplama
-            {
-                DoubleJump();
             }
         }
     }
@@ -49,14 +44,6 @@ public class KarakterHareketi : MonoBehaviour
     {
         rb.velocity = new Vector2(rb.velocity.x, ziplamaGucu);
         yerleTemas = false;
-        doubleJumpYapilabilir = true;
-    }
-
-    // Double jump fonksiyonu
-    private void DoubleJump()
-    {
-        rb.velocity = new Vector2(rb.velocity.x, ziplamaGucu);
-        doubleJumpYapilabilir = false;
     }
 
     // Yere temas kontrolü
@@ -65,12 +52,8 @@ public class KarakterHareketi : MonoBehaviour
         if (collision.gameObject.CompareTag("Ground"))
         {
             yerleTemas = true;
-            doubleJumpYapilabilir = false;
         }
     }
-
-  
-   
 
     // Hızın geçici olarak değiştirilmesini sağlayan fonksiyon
     public void HiziGeciciOlarakDegistir(float yeniHiz, float sure)

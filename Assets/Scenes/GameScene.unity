@@ -650,13 +650,25 @@ PrefabInstance:
       propertyPath: m_Name
       value: Rock
       objectReference: {fileID: 0}
+    - target: {fileID: 727789870445330859, guid: 25cb849deeab53649946d371c5fb5646, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3130422230164008185, guid: 25cb849deeab53649946d371c5fb5646, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 0.08
+      objectReference: {fileID: 0}
+    - target: {fileID: 3130422230164008185, guid: 25cb849deeab53649946d371c5fb5646, type: 3}
+      propertyPath: m_LocalScale.y
+      value: 0.08
+      objectReference: {fileID: 0}
     - target: {fileID: 3130422230164008185, guid: 25cb849deeab53649946d371c5fb5646, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -0.03
+      value: -0.01
       objectReference: {fileID: 0}
     - target: {fileID: 3130422230164008185, guid: 25cb849deeab53649946d371c5fb5646, type: 3}
       propertyPath: m_LocalPosition.y
-      value: -2.41
+      value: -2.545
       objectReference: {fileID: 0}
     - target: {fileID: 3130422230164008185, guid: 25cb849deeab53649946d371c5fb5646, type: 3}
       propertyPath: m_LocalPosition.z
@@ -1758,7 +1770,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 0.10980392, b: 0.76862746, a: 1}
+  m_Color: {r: 1, g: 0.50393903, b: 0.109803915, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -1919,7 +1931,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 0.10980392, b: 0.76862746, a: 0.972549}
+  m_Color: {r: 1, g: 0.5058824, b: 0.10980392, a: 0.972549}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -2340,7 +2352,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 0.10980392, b: 0.76862746, a: 0.392}
+  m_Color: {r: 1, g: 0.5058824, b: 0.10980392, a: 0.392}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -2607,9 +2619,29 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 6039820179586972092, guid: 967a493a38da6ee4fbcc7ce78d0eb185, type: 3}
+      propertyPath: m_Size.x
+      value: 2.3500621
+      objectReference: {fileID: 0}
+    - target: {fileID: 6039820179586972092, guid: 967a493a38da6ee4fbcc7ce78d0eb185, type: 3}
+      propertyPath: m_Size.y
+      value: 2.8006573
+      objectReference: {fileID: 0}
+    - target: {fileID: 6039820179586972092, guid: 967a493a38da6ee4fbcc7ce78d0eb185, type: 3}
+      propertyPath: m_Offset.x
+      value: -0.12496889
+      objectReference: {fileID: 0}
+    - target: {fileID: 6039820179586972092, guid: 967a493a38da6ee4fbcc7ce78d0eb185, type: 3}
+      propertyPath: m_Offset.y
+      value: -0.029404879
+      objectReference: {fileID: 0}
     - target: {fileID: 6811036198329134766, guid: 967a493a38da6ee4fbcc7ce78d0eb185, type: 3}
       propertyPath: hiz
-      value: 5
+      value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 6811036198329134766, guid: 967a493a38da6ee4fbcc7ce78d0eb185, type: 3}
+      propertyPath: ziplamaGucu
+      value: 6
       objectReference: {fileID: 0}
     m_RemovedComponents:
     - {fileID: 3196192683005828883, guid: 967a493a38da6ee4fbcc7ce78d0eb185, type: 3}
@@ -3432,7 +3464,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 0.9245283, g: 0.84716666, b: 0.48668563, a: 1}
+  m_Color: {r: 0.06415099, g: 0.057428967, b: 0.026507672, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
