@@ -1,8 +1,7 @@
 using System.Collections.Generic;
 using TMPro;
-using UnityEngine.UI;
 using UnityEngine;
-
+using UnityEngine.UI;
 
 public class PlatformSpawner : MonoBehaviour
 {
@@ -58,8 +57,40 @@ public class PlatformSpawner : MonoBehaviour
         Vector3 backgroundPos = currentBackground.transform.position;
         backgroundPos.y = startPlatform.position.y - platformHeight / 2;
         currentBackground.transform.position = backgroundPos;
+        AdjustBackgroundToScreen();
+
+        // Arka planın tam ekran olması için RectTransform ayarları
+        RectTransform rectTransform = currentBackground.GetComponent<RectTransform>();
+        if (rectTransform != null)
+        {
+            rectTransform.anchorMin = Vector2.zero;   // Sol alt köşe
+            rectTransform.anchorMax = Vector2.one;    // Sağ üst köşe
+            rectTransform.offsetMin = Vector2.zero;   // İçeriden uzaklık (0)
+            rectTransform.offsetMax = Vector2.zero;   // Dışarıdan uzaklık (0)
+        }
 
         starManager = FindObjectOfType<StarManager>();
+    }
+
+    void AdjustBackgroundToScreen()
+    {
+        if (currentBackground == null) return;
+
+        SpriteRenderer spriteRenderer = currentBackground.GetComponent<SpriteRenderer>();
+        if (spriteRenderer != null)
+        {
+            float worldScreenHeight = Camera.main.orthographicSize * 2f;
+            float worldScreenWidth = worldScreenHeight * Camera.main.aspect;
+
+            Vector2 spriteSize = spriteRenderer.sprite.bounds.size;
+
+            float scaleX = worldScreenWidth / spriteSize.x;
+            float scaleY = worldScreenHeight / spriteSize.y;
+
+            float finalScale = Mathf.Max(scaleX, scaleY);
+
+            currentBackground.transform.localScale = new Vector3(finalScale, finalScale, 1);
+        }
     }
 
     void Update()
@@ -111,6 +142,7 @@ public class PlatformSpawner : MonoBehaviour
         Vector3 coinPosition = new Vector3(nextSpawnPosition.x + coinXPosition, manualCoin.position.y, nextSpawnPosition.z);
         Instantiate(coinPrefab, coinPosition, Quaternion.identity);
     }
+
     void SpawnCloud()
     {
         if (cloudPrefab == null) return;
@@ -118,10 +150,8 @@ public class PlatformSpawner : MonoBehaviour
         nextCloudPosition.x += 60f;
         Vector3 cloudPosition = new Vector3(nextCloudPosition.x, cloudPrefab.transform.position.y, 0);
 
-        // Bulut ve baloncukları gruplayacak bir parent oluşturuyoruz
         GameObject cloudGroup = new GameObject("CloudGroup");
 
-        // Bulut oluştur ve parent olarak ata
         GameObject cloud = Instantiate(cloudPrefab, cloudPosition, Quaternion.identity);
         cloud.transform.SetParent(cloudGroup.transform);
 
@@ -138,13 +168,19 @@ public class PlatformSpawner : MonoBehaviour
         Vector3 balloonPosition = new Vector3(cloudPosition.x + 10f, balloonY, 0);
 
         List<int> answers = GenerateAnswerOptions();
+
+        GameObject balloonGroup = new GameObject("BalloonGroup");
+        balloonGroup.transform.SetParent(cloudGroup.transform); // CloudGroup'a ekle
+
         for (int i = 0; i < answers.Count; i++)
         {
             GameObject balloon = Instantiate(mathBalloonPrefab, balloonPosition, Quaternion.identity);
-            balloon.transform.SetParent(cloudGroup.transform); // Baloncukları gruba ekle
+            balloon.transform.SetParent(balloonGroup.transform);  // Baloncukları grup altında oluştur
             AttachAnswerToBalloon(balloon, answers[i]);
             balloonPosition.x += 4f;
         }
+
+        BalloonGroup balloonGroupScript = balloonGroup.AddComponent<BalloonGroup>(); // BalloonGroup scriptini ekle
     }
 
     void GenerateMathQuestion()
@@ -160,13 +196,7 @@ public class PlatformSpawner : MonoBehaviour
                 correctAnswer = a + b;
                 break;
             case 1: // Çıkarma
-                    // Çıkarmada negatif sonuçları engellemek için b'yi a'dan büyük yapmamız gerekebilir
-                if (a < b)
-                {
-                    int temp = a;
-                    a = b;
-                    b = temp;
-                }
+                if (a < b) { int temp = a; a = b; b = temp; }
                 currentMathQuestion = $"{a} - {b}";
                 correctAnswer = a - b;
                 break;
@@ -175,78 +205,43 @@ public class PlatformSpawner : MonoBehaviour
                 correctAnswer = a * b;
                 break;
             case 3: // Bölme
-                    // Bölme işlemi için a, b ile tam bölünebilir olmalı
                 b = Mathf.Max(1, b); // b'nin 0 olmasını engellemek için
-                a = b * Random.Range(1, 10); // b ile tam bölünecek a değeri üretelim
+                a = b * Random.Range(1, 10);
                 currentMathQuestion = $"{a} ÷ {b}";
                 correctAnswer = a / b;
                 break;
         }
     }
 
-
     void AttachMathQuestionToCloud(GameObject cloud)
     {
         TextMeshProUGUI text = cloud.GetComponentInChildren<TextMeshProUGUI>();
         if (text == null)
         {
-            // Eğer TextMeshProUGUI bileşeni yoksa, onu oluşturuyoruz
             GameObject textGO = new GameObject("MathQuestionText");
             textGO.transform.SetParent(cloud.transform, false);
             textGO.transform.localPosition = Vector3.zero;
 
-            // Canvas ekleyelim (bu, TextMeshProUGUI'nin görünebilmesi için gerekli)
             Canvas canvas = textGO.AddComponent<Canvas>();
-            canvas.renderMode = RenderMode.WorldSpace; // WorldSpace, 3D sahnede görünmesini sağlar
-            canvas.sortingOrder = 10; // Diğer öğelerin önünde görünmesini sağlar
+            canvas.renderMode = RenderMode.WorldSpace;
+            canvas.sortingOrder = 10;
 
-            // Ayrıca, Canvas'ı render etmesi için bir "CanvasScaler" bileşeni eklemeyi unutmayın.
             CanvasScaler scaler = textGO.AddComponent<CanvasScaler>();
             scaler.uiScaleMode = CanvasScaler.ScaleMode.ConstantPixelSize;
             scaler.referencePixelsPerUnit = 100;
 
             text = textGO.AddComponent<TextMeshProUGUI>();
-            text.fontSize = 1; // Font büyüklüğü
+            text.fontSize = 0.8f;
             text.alignment = TextAlignmentOptions.Center;
-            text.color = Color.blue;
         }
 
         text.text = currentMathQuestion;
-    }
-    void SpawnBalloonCluster(Vector3 cloudPosition)
-    {
-        if (mathBalloonPrefab == null)
-        {
-            return;
-        }
 
-        float balloonY = cloudPosition.y - 1.7f;
-        Vector3 balloonPosition = new Vector3(cloudPosition.x + 10f, balloonY, 0);
-
-        List<int> answers = GenerateAnswerOptions();
-        for (int i = 0; i < answers.Count; i++)
+        if (ColorUtility.TryParseHtmlString("#00b2ee", out Color newColor))
         {
-            GameObject balloon = Instantiate(mathBalloonPrefab, balloonPosition, Quaternion.identity);
-            AttachAnswerToBalloon(balloon, answers[i]);
-            balloonPosition.x += 4f;
+            text.color = newColor;
         }
     }
-
-    List<int> GenerateAnswerOptions()
-    {
-        List<int> answers = new List<int> { correctAnswer };
-        while (answers.Count < 3)
-        {
-            // Yanlış cevapların negatif olmaması için kontrol ekliyoruz
-            int wrongAnswer = Random.Range(correctAnswer - 10, correctAnswer + 10);
-            if (wrongAnswer >= 0 && !answers.Contains(wrongAnswer)) // Yanlış cevap negatif olmasın
-            {
-                answers.Add(wrongAnswer);
-            }
-        }
-        return ShuffleList(answers);
-    }
-
 
     void AttachAnswerToBalloon(GameObject balloon, int answer)
     {
@@ -269,17 +264,34 @@ public class PlatformSpawner : MonoBehaviour
         }
 
         text.text = answer.ToString();
-        text.fontSize = 8;
+        text.fontSize = 6;
         text.alignment = TextAlignmentOptions.Center;
-        text.color = Color.blue;
 
-        // Doğru cevabı belirle
+        if (ColorUtility.TryParseHtmlString("#00b2ee", out Color newColor))
+        {
+            text.color = newColor;
+        }
+
         MathBalloon balloonScript = balloon.AddComponent<MathBalloon>();
         balloonScript.dogruMu = (answer == correctAnswer);
+
+        balloonScript.dogruSound = Resources.Load<AudioClip>("Sounds/dogruCevap");
+        balloonScript.yanlisSound = Resources.Load<AudioClip>("Sounds/yanlisCevap");
     }
 
-
-
+    List<int> GenerateAnswerOptions()
+    {
+        List<int> answers = new List<int> { correctAnswer };
+        while (answers.Count < 3)
+        {
+            int wrongAnswer = Random.Range(correctAnswer - 10, correctAnswer + 10);
+            if (wrongAnswer >= 0 && !answers.Contains(wrongAnswer))
+            {
+                answers.Add(wrongAnswer);
+            }
+        }
+        return ShuffleList(answers);
+    }
 
     List<T> ShuffleList<T>(List<T> list)
     {
@@ -311,5 +323,4 @@ public class PlatformSpawner : MonoBehaviour
             spawnInterval = Mathf.Max(0.5f, 2f - playerSpeed * speedFactor);
         }
     }
-
 }

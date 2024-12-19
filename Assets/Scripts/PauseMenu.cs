@@ -29,7 +29,11 @@ public class PauseMenu : MonoBehaviour
         Time.timeScale = 1; // Oyunu devam ettir
         pauseMenuPanel.SetActive(false); // Menüyü gizle
     }
-
+    public void Return()
+    {
+        Time.timeScale = 1; // Oyunu tekrar başlat
+        SceneManager.LoadScene(SceneManager.GetActiveScene().name); // Mevcut sahneyi yeniden yükle
+    }
     public void MainMenu()
     {
         Time.timeScale = 1; // Oyunu devam ettir
