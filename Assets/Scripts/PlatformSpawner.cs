@@ -112,36 +112,68 @@ public class PlatformSpawner : MonoBehaviour
         UpdateBackgroundPosition();
         AdjustSpawnIntervalByPlayerSpeed();
     }
-
     void SpawnPlatform()
     {
         Instantiate(platformPrefab, nextSpawnPosition, Quaternion.identity);
         nextSpawnPosition += new Vector3(platformWidth, 0, 0);
 
-        if (Random.value < rockSpawnChance)
+        // Kaya ve coin spawn işlemi
+        float distanceBetweenObjects = 2f; // Kaya ve coin arasındaki mesafe
+        Vector3 rockPosition = GetAvailablePosition(distanceBetweenObjects);
+        if (rockPosition != Vector3.zero && Random.value < rockSpawnChance)
         {
-            SpawnRock();
+            SpawnRock(rockPosition);
         }
 
-        if (Random.value < coinSpawnChance)
+        Vector3 coinPosition = GetAvailablePosition(distanceBetweenObjects);
+        if (coinPosition != Vector3.zero && Random.value < coinSpawnChance)
         {
-            SpawnCoin();
+            SpawnCoin(coinPosition);
         }
     }
 
-    void SpawnRock()
+    // Available position kontrolü
+    Vector3 GetAvailablePosition(float minDistance)
     {
-        float rockXPosition = Random.Range(-platformWidth / 2, platformWidth / 2);
-        Vector3 rockPosition = new Vector3(nextSpawnPosition.x + rockXPosition, manualRock.position.y, nextSpawnPosition.z);
+        Vector3 position = nextSpawnPosition;
+        bool positionIsValid = true;
+
+        // Kaya ve coinlerin yakın olmaması için kontrol yap
+        foreach (Transform child in transform)
+        {
+            float distance = Vector3.Distance(child.position, position);
+            if (distance < minDistance) // Eğer nesneler çok yakınsa, geçerli konum değil
+            {
+                positionIsValid = false;
+                break;
+            }
+        }
+
+        return positionIsValid ? position : Vector3.zero;
+    }
+
+    // Kaya spawn fonksiyonu
+    void SpawnRock(Vector3 rockPosition)
+    {
+        rockPosition.y = manualRock.position.y;  // Y pozisyonunu manuel kaya ile aynı yap
         Instantiate(rockPrefab, rockPosition, Quaternion.identity);
     }
 
-    void SpawnCoin()
+    // Coin spawn fonksiyonu
+    void SpawnCoin(Vector3 coinPosition)
     {
-        float coinXPosition = Random.Range(-platformWidth / 2, platformWidth / 2);
-        Vector3 coinPosition = new Vector3(nextSpawnPosition.x + coinXPosition, manualCoin.position.y, nextSpawnPosition.z);
-        Instantiate(coinPrefab, coinPosition, Quaternion.identity);
+        coinPosition.y = manualCoin.position.y;  // Y pozisyonunu manuel coin ile aynı yap
+
+        // 1, 2 veya 3 coin spawn etmek için rastgele bir sayı
+        int coinCount = Random.Range(1, 4); // 1 ile 3 arasında
+        for (int i = 0; i < coinCount; i++)
+        {
+            float xOffset = i * 1.5f; // Coinlerin yan yana olmasını sağlamak için x offset
+            Vector3 coinPositionWithOffset = new Vector3(coinPosition.x + xOffset, coinPosition.y, coinPosition.z);
+            Instantiate(coinPrefab, coinPositionWithOffset, Quaternion.identity);
+        }
     }
+
 
     void SpawnCloud()
     {
