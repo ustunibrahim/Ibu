@@ -42,7 +42,7 @@ public class KarakterHareketi : MonoBehaviour
     // Zıplama fonksiyonu
     private void Jump()
     {
-        rb.velocity = new Vector2(rb.velocity.x, ziplamaGucu);
+        rb.linearVelocity = new Vector2(rb.linearVelocity.x, ziplamaGucu);
         yerleTemas = false;
     }
 

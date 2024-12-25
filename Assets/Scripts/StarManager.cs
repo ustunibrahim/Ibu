@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class StarManager : MonoBehaviour
 {
@@ -7,18 +8,22 @@ public class StarManager : MonoBehaviour
     public GameObject gameOverPanel; // Game Over paneli referansı
     private int currentStars;
 
+    private const string StarsKey = "CurrentStars"; // PlayerPrefs anahtarı
+    private const int MaxStars = 5; // Maksimum yıldız sayısı
+
     void Start()
     {
-        currentStars = stars.Count; // Başlangıçtaki yıldız sayısını al
+        LoadStars(); // Yıldız sayısını kayıttan yükle
         gameOverPanel.SetActive(false); // Game Over paneli kapalı başlasın
     }
 
     public void YildizArttir()
     {
-        if (currentStars < stars.Count) // Maksimum yıldız sayısını aşma
+        if (currentStars < MaxStars) // Maksimum yıldız sayısını aşma
         {
             stars[currentStars].SetActive(true);
             currentStars++;
+            SaveStars(); // Yıldız sayısını kaydet
         }
     }
 
@@ -28,6 +33,7 @@ public class StarManager : MonoBehaviour
         {
             currentStars--;
             stars[currentStars].SetActive(false);
+            SaveStars(); // Yıldız sayısını kaydet
         }
 
         if (currentStars == 0)
@@ -40,5 +46,42 @@ public class StarManager : MonoBehaviour
     {
         gameOverPanel.SetActive(true);
         Time.timeScale = 0; // Oyunu durdur
+
+        // Skoru sıfırlamak için GameManager'dan ResetScore metodunu çağır
+        GameManager.instance.ResetScore();
+
+        // Yıldız sayısını 5 yapalım ve kaydedelim
+        currentStars = MaxStars;
+        for (int i = 0; i < MaxStars; i++)
+        {
+            stars[i].SetActive(true); // Tüm yıldızları tekrar aktif et
+        }
+
+        SaveStars(); // Yıldız sayısını kaydet
+    }
+
+    // Yıldız sayısını kaydet
+    private void SaveStars()
+    {
+        PlayerPrefs.SetInt(StarsKey, currentStars); // PlayerPrefs'te yıldız sayısını kaydet
+        PlayerPrefs.Save();
+    }
+
+    // Yıldız sayısını yükle
+    private void LoadStars()
+    {
+        // PlayerPrefs'ten yıldız sayısını al, varsayılan olarak 5 yıldız ile başla
+        currentStars = PlayerPrefs.GetInt(StarsKey, MaxStars);
+
+        // Yıldızları güncelle
+        for (int i = 0; i < currentStars; i++)
+        {
+            stars[i].SetActive(true); // Yıldızları aktif et
+        }
+        // Kalan yıldızları gizle
+        for (int i = currentStars; i < MaxStars; i++)
+        {
+            stars[i].SetActive(false); // Geriye kalan yıldızları gizle
+        }
     }
 }

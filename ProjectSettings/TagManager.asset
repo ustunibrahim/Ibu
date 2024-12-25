@@ -2,11 +2,13 @@
 %TAG !u! tag:unity3d.com,2011:
 --- !u!78 &1
 TagManager:
-  serializedVersion: 2
+  serializedVersion: 3
   tags:
   - Ground
   - Rock
   - Coin
+  - PausePanel
+  - ScoreText
   layers:
   - Default
   - TransparentFX
@@ -47,3 +49,5 @@ TagManager:
   - name: Background
     uniqueID: 3082830031
     locked: 0
+  m_RenderingLayers:
+  - Default
