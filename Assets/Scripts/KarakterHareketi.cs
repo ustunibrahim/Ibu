@@ -28,8 +28,7 @@ public class KarakterHareketi : MonoBehaviour
         {
             transform.Translate(Vector2.right * hiz * Time.deltaTime);
         }
-
-        // Ekrana tıklama kontrolü
+        // Ekrana tıklama kontrolü, sadece UI'ye tıklanmadığından emin olun
         if ((Input.touchCount > 0 || Input.GetMouseButtonDown(0)) && !IsClickingOnUI())
         {
             if (yerleTemas) // Yerdeyken zıplama
@@ -39,12 +38,15 @@ public class KarakterHareketi : MonoBehaviour
         }
     }
 
-    // Zıplama fonksiyonu
     private void Jump()
     {
-        rb.linearVelocity = new Vector2(rb.linearVelocity.x, ziplamaGucu);
-        yerleTemas = false;
+        if (Time.timeScale > 0) // Eğer oyun aktifse, zıplamayı gerçekleştir
+        {
+            rb.linearVelocity = new Vector2(rb.linearVelocity.x, ziplamaGucu);
+            yerleTemas = false;
+        }
     }
+
 
     // Yere temas kontrolü
     private void OnCollisionEnter2D(Collision2D collision)
