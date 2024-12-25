@@ -351,7 +351,7 @@ public class PlatformSpawner : MonoBehaviour
     {
         if (playerRb != null)
         {
-            float playerSpeed = Mathf.Abs(playerRb.velocity.x);
+            float playerSpeed = Mathf.Abs(playerRb.linearVelocity.x);
             spawnInterval = Mathf.Max(0.5f, 2f - playerSpeed * speedFactor);
         }
     }

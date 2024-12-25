@@ -1,49 +1,54 @@
 using UnityEngine;
-using UnityEngine.SceneManagement; // Scene geçişleri için
+using UnityEngine.SceneManagement;
+
 public class PauseMenu : MonoBehaviour
 {
-    public GameObject pauseMenuPanel; // Menü paneli
-    private bool isPaused = false;   // Oyun duraklatıldı mı?
-
-    // Pause butonuna tıklanınca çağrılır
+    private bool isPaused = false;
     public void TogglePause()
     {
         isPaused = !isPaused;
-
         if (isPaused)
         {
-            Time.timeScale = 0; // Oyunu durdur
-            pauseMenuPanel.SetActive(true); // Menüyü göster
+            Time.timeScale = 0;
+            GameManager.instance.pauseMenuPanel?.SetActive(true);
+            
         }
         else
         {
-            Time.timeScale = 1; // Oyunu devam ettir
-            pauseMenuPanel.SetActive(false); // Menüyü gizle
+            Time.timeScale = 1;
+            GameManager.instance.pauseMenuPanel?.SetActive(false);
+            
         }
     }
 
-    // Resume butonuna tıklanınca çağrılır
     public void ResumeGame()
     {
         isPaused = false;
-        Time.timeScale = 1; // Oyunu devam ettir
-        pauseMenuPanel.SetActive(false); // Menüyü gizle
+        Time.timeScale = 1;  // Zamanı geri başlat
+        if (GameManager.instance.pauseMenuPanel != null)
+        {
+            GameManager.instance.pauseMenuPanel.SetActive(false); // Pause menüsünü gizle
+        }
+       
+    }
+
+    public void MainMenu()
+    {
+        Time.timeScale = 1;  // Zamanı sıfırla
+        SceneManager.LoadScene("Menu"); // Ana menüye git
     }
     public void Return()
     {
-        Time.timeScale = 1; // Oyunu tekrar başlat
-        SceneManager.LoadScene(SceneManager.GetActiveScene().name); // Mevcut sahneyi yeniden yükle
-    }
-    public void MainMenu()
-    {
-        Time.timeScale = 1; // Oyunu devam ettir
-        SceneManager.LoadScene("Menu");
+        Time.timeScale = 1;  // Zamanı sıfırla
+        SceneManager.LoadScene("GameScene"); // Ana menüye git
     }
 
-    // Quit butonuna tıklanınca çağrılır (opsiyonel)
+
+
     public void QuitGame()
     {
-        Time.timeScale = 1; // Oyunu duraklatmadan kapat
-        Application.Quit(); // Oyundan çık (Editor'de çalışmaz)
+        Time.timeScale = 1; // Zamanı sıfırla
+        Application.Quit();
+        Debug.Log("Oyun kapatıldı.");
     }
 }
