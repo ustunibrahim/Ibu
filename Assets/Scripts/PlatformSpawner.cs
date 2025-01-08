@@ -118,7 +118,7 @@ public class PlatformSpawner : MonoBehaviour
         nextSpawnPosition += new Vector3(platformWidth, 0, 0);
 
         // Kaya ve coin spawn işlemi
-        float distanceBetweenObjects = 2f; // Kaya ve coin arasındaki mesafe
+        float distanceBetweenObjects = 1f; // Kaya ve coin arasındaki mesafe
         Vector3 rockPosition = GetAvailablePosition(distanceBetweenObjects);
         if (rockPosition != Vector3.zero && Random.value < rockSpawnChance)
         {
@@ -164,8 +164,8 @@ public class PlatformSpawner : MonoBehaviour
     {
         coinPosition.y = manualCoin.position.y;  // Y pozisyonunu manuel coin ile aynı yap
 
-        // 1, 2 veya 3 coin spawn etmek için rastgele bir sayı
-        int coinCount = Random.Range(1, 4); // 1 ile 3 arasında
+        
+        int coinCount = Random.Range(2, 5); 
         for (int i = 0; i < coinCount; i++)
         {
             float xOffset = i * 1.5f; // Coinlerin yan yana olmasını sağlamak için x offset

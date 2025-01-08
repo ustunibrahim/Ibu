@@ -1,11 +1,12 @@
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
 public class StarManager : MonoBehaviour
 {
     public List<GameObject> stars; // Canvas'taki yıldızları tutacak liste
     public GameObject gameOverPanel; // Game Over paneli referansı
+    public Sayac timer; // Timer scripti referansı
     private int currentStars;
 
     private const string StarsKey = "CurrentStars"; // PlayerPrefs anahtarı
@@ -15,6 +16,12 @@ public class StarManager : MonoBehaviour
     {
         LoadStars(); // Yıldız sayısını kayıttan yükle
         gameOverPanel.SetActive(false); // Game Over paneli kapalı başlasın
+
+        // Timer referansını al
+        if (timer == null)
+        {
+            timer = Sayac.Instance;
+        }
     }
 
     public void YildizArttir()
@@ -47,6 +54,9 @@ public class StarManager : MonoBehaviour
         gameOverPanel.SetActive(true);
         Time.timeScale = 0; // Oyunu durdur
 
+        // Skoru kontrol et ve güncelle
+        GameManager.instance.CheckHighScore();
+
         // Skoru sıfırlamak için GameManager'dan ResetScore metodunu çağır
         GameManager.instance.ResetScore();
 
@@ -58,6 +68,12 @@ public class StarManager : MonoBehaviour
         }
 
         SaveStars(); // Yıldız sayısını kaydet
+
+        // Sayaç sıfırlandı
+        if (timer != null)
+        {
+            timer.ResetTimer(); // Sayaç sıfırlandı
+        }
     }
 
     // Yıldız sayısını kaydet
