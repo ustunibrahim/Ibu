@@ -1367,6 +1367,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   scoreText: {fileID: 946868697}
   pauseMenuPanel: {fileID: 1289510795}
+  score: 0
 --- !u!4 &690233458
 Transform:
   m_ObjectHideFlags: 0
