@@ -4,22 +4,31 @@ using UnityEngine.EventSystems;
 
 public class KarakterHareketi : MonoBehaviour
 {
-    public float hiz = 4f;  // Karakterin normal hızı
-    public float ziplamaGucu = 6f; // Zıplama gücü
-    private bool yerleTemas = false; // Karakterin yerle temas halinde olup olmadığını kontrol eder
-    private float orijinalHiz; // Karakterin normal hızını saklar
-    private bool hizDegisiyor = false; // Hızın geçici olarak değiştiğini kontrol eder
+    public float hiz = 4f;
+    public float ziplamaGucu = 6f;
+    public float hizArtisCarpani = 1.5f; // Hız artış çarpanı eklendi
+    public float hizArtisSuresi = 4f; // Hız artış süresi eklendi
+    public AudioClip carrotSound; // Carrot ses dosyası
+
+    private bool yerleTemas = false;
+    private float orijinalHiz;
+    private bool hizDegisiyor = false;
     private Rigidbody2D rb;
+    private AudioSource audioSource;
 
     private void Start()
     {
-        rb = GetComponent<Rigidbody2D>(); // Rigidbody2D bileşenini alıyoruz
-        orijinalHiz = hiz; // Başlangıç hızını kaydet
+        rb = GetComponent<Rigidbody2D>();
+        orijinalHiz = hiz;
+        audioSource = GetComponent<AudioSource>();
+        if (audioSource == null)
+        {
+            audioSource = gameObject.AddComponent<AudioSource>();
+        }
     }
 
     private void Update()
     {
-        // Karakterin sağa doğru hareket etmesini sağlıyoruz
         if (!hizDegisiyor)
         {
             transform.Translate(Vector2.right * hiz * Time.deltaTime);
@@ -28,10 +37,10 @@ public class KarakterHareketi : MonoBehaviour
         {
             transform.Translate(Vector2.right * hiz * Time.deltaTime);
         }
-        // Ekrana tıklama kontrolü, sadece UI'ye tıklanmadığından emin olun
+
         if ((Input.touchCount > 0 || Input.GetMouseButtonDown(0)) && !IsClickingOnUI())
         {
-            if (yerleTemas) // Yerdeyken zıplama
+            if (yerleTemas)
             {
                 Jump();
             }
@@ -40,15 +49,13 @@ public class KarakterHareketi : MonoBehaviour
 
     private void Jump()
     {
-        if (Time.timeScale > 0) // Eğer oyun aktifse, zıplamayı gerçekleştir
+        if (Time.timeScale > 0)
         {
             rb.linearVelocity = new Vector2(rb.linearVelocity.x, ziplamaGucu);
             yerleTemas = false;
         }
     }
 
-
-    // Yere temas kontrolü
     private void OnCollisionEnter2D(Collision2D collision)
     {
         if (collision.gameObject.CompareTag("Ground"))
@@ -57,10 +64,22 @@ public class KarakterHareketi : MonoBehaviour
         }
     }
 
-    // Hızın geçici olarak değiştirilmesini sağlayan fonksiyon
+    private void OnTriggerEnter2D(Collider2D carpisma)
+    {
+        if (carpisma.gameObject.CompareTag("Carrot"))
+        {
+            HiziGeciciOlarakDegistir(hiz * hizArtisCarpani, hizArtisSuresi);
+            if (carrotSound != null && audioSource != null)
+            {
+                audioSource.PlayOneShot(carrotSound);
+            }
+            Destroy(carpisma.gameObject);
+        }
+    }
+
     public void HiziGeciciOlarakDegistir(float yeniHiz, float sure)
     {
-        if (hizDegisiyor) return; // Eğer hız zaten değiştiyse çık
+        if (hizDegisiyor) return;
         StartCoroutine(HiziGeciciDegistirCoroutine(yeniHiz, sure));
     }
 
@@ -76,7 +95,6 @@ public class KarakterHareketi : MonoBehaviour
         hizDegisiyor = false;
     }
 
-    // UI tıklamalarını kontrol eden fonksiyon
     private bool IsClickingOnUI()
     {
         return EventSystem.current != null && EventSystem.current.IsPointerOverGameObject();

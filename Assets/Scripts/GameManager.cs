@@ -65,6 +65,13 @@ public class GameManager : MonoBehaviour
         SaveScore(); // Skoru kaydet
     }
 
+    public void TrueBallon()
+    {
+        score += 100; // Skoru iki katına çıkar
+        UpdateScoreText();
+        SaveScore(); // Skoru kaydet
+    }
+
     private void UpdateScoreText()
     {
         if (scoreText != null)
