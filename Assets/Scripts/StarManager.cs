@@ -74,6 +74,9 @@ public class StarManager : MonoBehaviour
         {
             timer.ResetTimer(); // Sayaç sıfırlandı
         }
+
+        // Oyun sonu skor ve süre bilgisini göster
+        Debug.Log("Game Over! Score: " + GameManager.instance.score + " Time: " + Sayac.Instance.GetCurrentTime());
     }
 
     // Yıldız sayısını kaydet

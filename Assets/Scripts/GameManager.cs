@@ -5,10 +5,9 @@ using UnityEngine.UI;
 public class GameManager : MonoBehaviour
 {
     public static GameManager instance;
-    public Text highScoreText; // Skor tablosu için Text elemanı
     public Text scoreText;
     public GameObject pauseMenuPanel;
-    private int score = 0;
+    public int score = 0;
 
     void Awake()
     {
@@ -30,15 +29,14 @@ public class GameManager : MonoBehaviour
         SceneManager.sceneLoaded += OnSceneLoaded; // Scene yüklendiğinde tetiklenecek
         FindUIObjects();
         UpdateScoreText();
-        UpdateHighScoreText(); // Skor tablosunu güncelle
     }
 
     void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {
         FindUIObjects();  // PauseMenuPanel'i her sahnede yeniden bul
         UpdateScoreText(); // Skoru güncelle
-        UpdateHighScoreText(); // Skor tablosunu güncelle
     }
+
     private void FindUIObjects()
     {
         if (scoreText == null)
@@ -58,11 +56,8 @@ public class GameManager : MonoBehaviour
                 }
             }
         }
-        if (highScoreText == null)
-        {
-            highScoreText = GameObject.FindWithTag("HighScoreText")?.GetComponent<Text>();
-        }
     }
+
     public void AddScore(int amount)
     {
         score += amount;
@@ -95,23 +90,25 @@ public class GameManager : MonoBehaviour
         SaveScore(); // Skoru sıfırla ve kaydet
         UpdateScoreText();
     }
-    public void UpdateHighScoreText()
-    {
-        if (highScoreText != null)
-        {
-            highScoreText.text = "High Score: " + PlayerPrefs.GetInt("HighScore", 0).ToString();
-        }
-    }
+
     public void CheckHighScore()
     {
-        int currentScore = score;
-        int highScore = PlayerPrefs.GetInt("HighScore", 0);
+        float currentScoreWithTime = CalculateScoreWithTime(score, Sayac.Instance.GetCurrentTime());
+        float highScoreWithTime = PlayerPrefs.GetFloat("HighScoreWithTime", 0f);
 
-        if (currentScore > highScore)
+        if (currentScoreWithTime > highScoreWithTime)
         {
-            PlayerPrefs.SetInt("HighScore", currentScore);
+            PlayerPrefs.SetFloat("HighScoreWithTime", currentScoreWithTime);
+            PlayerPrefs.SetInt("HighScore", score);
+            PlayerPrefs.SetFloat("BestTime", Sayac.Instance.GetCurrentTime());
             PlayerPrefs.Save();
-            UpdateHighScoreText();
         }
+    }
+
+    public float CalculateScoreWithTime(int score, float time)
+    {
+        // Skoru süreye bölerek puanlama yapalım
+        // Süre arttıkça puan azalacak, böylece daha hızlı bitirenler daha yüksek puan alacak
+        return score / time;
     }
 }
