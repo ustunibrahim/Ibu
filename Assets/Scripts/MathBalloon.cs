@@ -1,5 +1,6 @@
 using UnityEngine;
 using System.Collections;
+
 public class MathBalloon : MonoBehaviour
 {
     public bool dogruMu; // Balonun doğru cevabı mı taşıdığı bilgisini tutar
@@ -28,6 +29,7 @@ public class MathBalloon : MonoBehaviour
             if (dogruMu)
             {
                 starManager.YildizArttir(); // Doğru cevap için yıldız artır
+                GameManager.instance.TrueBallon(); // Skora 100 ekler
                 StartCoroutine(PlaySoundAndDestroy(dogruSound));   // Doğru cevap sesi çal ve baloncukları yok et
             }
             else

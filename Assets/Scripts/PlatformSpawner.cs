@@ -12,6 +12,7 @@ public class PlatformSpawner : MonoBehaviour
     public GameObject coinPrefab;
     public GameObject cloudPrefab;
     public GameObject mathBalloonPrefab;
+    public GameObject CarrotPrefab; // Carrot prefab'ı eklendi
 
     public Transform startPlatform;
     public Transform player;
@@ -22,6 +23,7 @@ public class PlatformSpawner : MonoBehaviour
     public float platformWidth = 10f;
     public float rockSpawnChance = 0.2f;
     public float coinSpawnChance = 0.3f;
+    public float CarrotSpawnChance = 0.1f; // Carrot spawn Chance eklendi
     public float cloudSpawnInterval = 3f;
     public float platformHeight = 1f;
     public float speedFactor = 0.5f;
@@ -112,13 +114,14 @@ public class PlatformSpawner : MonoBehaviour
         UpdateBackgroundPosition();
         AdjustSpawnIntervalByPlayerSpeed();
     }
+
     void SpawnPlatform()
     {
         Instantiate(platformPrefab, nextSpawnPosition, Quaternion.identity);
         nextSpawnPosition += new Vector3(platformWidth, 0, 0);
 
         // Kaya ve coin spawn işlemi
-        float distanceBetweenObjects = 1f; // Kaya ve coin arasındaki mesafe
+        float distanceBetweenObjects = 1f;
         Vector3 rockPosition = GetAvailablePosition(distanceBetweenObjects);
         if (rockPosition != Vector3.zero && Random.value < rockSpawnChance)
         {
@@ -130,19 +133,24 @@ public class PlatformSpawner : MonoBehaviour
         {
             SpawnCoin(coinPosition);
         }
+
+        // Carrot spawn işlemi
+        Vector3 CarrotPosition = GetAvailablePosition(distanceBetweenObjects);
+        if (CarrotPosition != Vector3.zero && Random.value < CarrotSpawnChance)
+        {
+            SpawnCarrot(CarrotPosition);
+        }
     }
 
-    // Available position kontrolü
     Vector3 GetAvailablePosition(float minDistance)
     {
         Vector3 position = nextSpawnPosition;
         bool positionIsValid = true;
 
-        // Kaya ve coinlerin yakın olmaması için kontrol yap
         foreach (Transform child in transform)
         {
             float distance = Vector3.Distance(child.position, position);
-            if (distance < minDistance) // Eğer nesneler çok yakınsa, geçerli konum değil
+            if (distance < minDistance)
             {
                 positionIsValid = false;
                 break;
@@ -152,28 +160,40 @@ public class PlatformSpawner : MonoBehaviour
         return positionIsValid ? position : Vector3.zero;
     }
 
-    // Kaya spawn fonksiyonu
     void SpawnRock(Vector3 rockPosition)
     {
-        rockPosition.y = manualRock.position.y;  // Y pozisyonunu manuel kaya ile aynı yap
+        rockPosition.y = manualRock.position.y;
         Instantiate(rockPrefab, rockPosition, Quaternion.identity);
     }
 
-    // Coin spawn fonksiyonu
     void SpawnCoin(Vector3 coinPosition)
     {
-        coinPosition.y = manualCoin.position.y;  // Y pozisyonunu manuel coin ile aynı yap
+        coinPosition.y = manualCoin.position.y;
 
-        
-        int coinCount = Random.Range(2, 5); 
+        int coinCount = Random.Range(2, 5);
         for (int i = 0; i < coinCount; i++)
         {
-            float xOffset = i * 1.5f; // Coinlerin yan yana olmasını sağlamak için x offset
+            float xOffset = i * 1.5f;
             Vector3 coinPositionWithOffset = new Vector3(coinPosition.x + xOffset, coinPosition.y, coinPosition.z);
             Instantiate(coinPrefab, coinPositionWithOffset, Quaternion.identity);
         }
     }
 
+    void SpawnCarrot(Vector3 CarrotPosition)
+    {
+        CarrotPosition.y = MevcutCarrotYPosition();
+        Instantiate(CarrotPrefab, CarrotPosition, Quaternion.identity);
+    }
+
+    float MevcutCarrotYPosition()
+    {
+        GameObject mevcutCarrot = GameObject.FindGameObjectWithTag("Carrot");
+        if (mevcutCarrot != null)
+        {
+            return mevcutCarrot.transform.position.y;
+        }
+        return manualCoin.position.y;
+    }
 
     void SpawnCloud()
     {
@@ -190,8 +210,9 @@ public class PlatformSpawner : MonoBehaviour
         GenerateMathQuestion();
         AttachMathQuestionToCloud(cloud);
 
-        SpawnBalloonCluster(cloudPosition, cloudGroup); // Baloncukları bulut grubuna ekle
+        SpawnBalloonCluster(cloudPosition, cloudGroup);
     }
+
     void SpawnBalloonCluster(Vector3 cloudPosition, GameObject cloudGroup)
     {
         if (mathBalloonPrefab == null) return;
@@ -202,17 +223,17 @@ public class PlatformSpawner : MonoBehaviour
         List<int> answers = GenerateAnswerOptions();
 
         GameObject balloonGroup = new GameObject("BalloonGroup");
-        balloonGroup.transform.SetParent(cloudGroup.transform); // CloudGroup'a ekle
+        balloonGroup.transform.SetParent(cloudGroup.transform);
 
         for (int i = 0; i < answers.Count; i++)
         {
             GameObject balloon = Instantiate(mathBalloonPrefab, balloonPosition, Quaternion.identity);
-            balloon.transform.SetParent(balloonGroup.transform);  // Baloncukları grup altında oluştur
+            balloon.transform.SetParent(balloonGroup.transform);
             AttachAnswerToBalloon(balloon, answers[i]);
             balloonPosition.x += 4f;
         }
 
-        BalloonGroup balloonGroupScript = balloonGroup.AddComponent<BalloonGroup>(); // BalloonGroup scriptini ekle
+        BalloonGroup balloonGroupScript = balloonGroup.AddComponent<BalloonGroup>();
     }
 
     void GenerateMathQuestion()
@@ -223,21 +244,21 @@ public class PlatformSpawner : MonoBehaviour
 
         switch (operation)
         {
-            case 0: // Toplama
+            case 0:
                 currentMathQuestion = $"{a} + {b}";
                 correctAnswer = a + b;
                 break;
-            case 1: // Çıkarma
+            case 1:
                 if (a < b) { int temp = a; a = b; b = temp; }
                 currentMathQuestion = $"{a} - {b}";
                 correctAnswer = a - b;
                 break;
-            case 2: // Çarpma
+            case 2:
                 currentMathQuestion = $"{a} x {b}";
                 correctAnswer = a * b;
                 break;
-            case 3: // Bölme
-                b = Mathf.Max(1, b); // b'nin 0 olmasını engellemek için
+            case 3:
+                b = Mathf.Max(1, b);
                 a = b * Random.Range(1, 10);
                 currentMathQuestion = $"{a} ÷ {b}";
                 correctAnswer = a / b;
