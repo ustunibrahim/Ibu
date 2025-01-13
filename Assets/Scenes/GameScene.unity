@@ -2524,8 +2524,8 @@ MonoBehaviour:
   manualCoin: {fileID: 8072819368513319330, guid: c0c1cc3f3ac0ee1408b00f25a31de0f8, type: 3}
   spawnInterval: 2
   platformWidth: 10
-  rockSpawnChance: 0.2
-  coinSpawnChance: 0.3
+  rockSpawnChance: 0.5
+  coinSpawnChance: 0.6
   CarrotSpawnChance: 0.1
   cloudSpawnInterval: 3
   platformHeight: 1

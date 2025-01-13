@@ -19,10 +19,10 @@ public class PlatformSpawner : MonoBehaviour
     public Transform manualRock;
     public Transform manualCoin;
 
-    public float spawnInterval = 2f;
+    public float spawnInterval = 1.5f; // Platform spawn aralığı azaltıldı
     public float platformWidth = 10f;
-    public float rockSpawnChance = 0.2f;
-    public float coinSpawnChance = 0.3f;
+    public float rockSpawnChance = 0.5f; // Kaya spawn olasılığı artırıldı
+    public float coinSpawnChance = 0.6f; // Coin spawn olasılığı artırıldı
     public float CarrotSpawnChance = 0.1f; // Carrot spawn Chance eklendi
     public float cloudSpawnInterval = 3f;
     public float platformHeight = 1f;
@@ -121,7 +121,7 @@ public class PlatformSpawner : MonoBehaviour
         nextSpawnPosition += new Vector3(platformWidth, 0, 0);
 
         // Kaya ve coin spawn işlemi
-        float distanceBetweenObjects = 1f;
+        float distanceBetweenObjects = 0.5f; // Nesneler arasındaki minimum mesafe azaltıldı
         Vector3 rockPosition = GetAvailablePosition(distanceBetweenObjects);
         if (rockPosition != Vector3.zero && Random.value < rockSpawnChance)
         {
