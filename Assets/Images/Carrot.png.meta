@@ -373,7 +373,16 @@ TextureImporter:
     secondaryTextures: []
     spriteCustomMetadata:
       entries: []
-    nameFileIdTable: {}
+    nameFileIdTable:
+      Carrot_0: -5859083586626064994
+      Carrot_1: -2094157912208876536
+      Carrot_2: -830467699528618894
+      Carrot_3: 3721053832486967156
+      Carrot_4: -3855089239954288668
+      Carrot_5: 1746509244472477445
+      Carrot_6: 3928329487851121431
+      Carrot_7: -1664143722742511458
+      Carrot_8: -8647662672568222393
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

@@ -9,6 +9,7 @@ public class KarakterHareketi : MonoBehaviour
     public float hizArtisCarpani = 1.5f; // Hız artış çarpanı eklendi
     public float hizArtisSuresi = 4f; // Hız artış süresi eklendi
     public AudioClip carrotSound; // Carrot ses dosyası
+    public AudioClip jumpSound; // Zıplama ses dosyası
 
     private bool yerleTemas = false;
     private float orijinalHiz;
@@ -53,6 +54,12 @@ public class KarakterHareketi : MonoBehaviour
         {
             rb.linearVelocity = new Vector2(rb.linearVelocity.x, ziplamaGucu);
             yerleTemas = false;
+
+            // Zıplama sesini çal
+            if (jumpSound != null && audioSource != null)
+            {
+                audioSource.PlayOneShot(jumpSound);
+            }
         }
     }
 
