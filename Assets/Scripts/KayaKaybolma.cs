@@ -7,6 +7,7 @@ public class KayaKaybolma : MonoBehaviour
     private bool kayboluyorMu = false;
     public float geciciHiz = 2f;  // Hız azaltma oranı
     public float yavaslamaSuresi = 3f;  // Yavaşlama süresi
+    public AudioClip rockSound;
 
     public KarakterHareketi karakterHareketi;
 
@@ -22,6 +23,7 @@ public class KayaKaybolma : MonoBehaviour
     {
         if (diger.CompareTag("Player") && !kayboluyorMu)
         {
+            SoundManager.Instance.PlaySound(rockSound);
             kayboluyorMu = true;
 
             if (karakterHareketi != null)
