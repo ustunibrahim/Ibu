@@ -13,17 +13,23 @@ public class PlatformSpawner : MonoBehaviour
     public GameObject cloudPrefab;
     public GameObject mathBalloonPrefab;
     public GameObject CarrotPrefab; // Carrot prefab'ı eklendi
+    public GameObject plusOneHealthPrefab; // +1 can prefab'ı eklendi
+    public GameObject poisonPrefab; // Zehir prefab'ı eklendi
+    public GameObject plusTwoHealthPrefab; // +2 can prefab'ı eklendi
 
     public Transform startPlatform;
     public Transform player;
     public Transform manualRock;
     public Transform manualCoin;
 
-    public float spawnInterval = 1.5f; // Platform spawn aralığı azaltıldı
+    public float spawnInterval = 1.5f; // Platform spawn aralığı
     public float platformWidth = 10f;
-    public float rockSpawnChance = 0.5f; // Kaya spawn olasılığı artırıldı
-    public float coinSpawnChance = 0.6f; // Coin spawn olasılığı artırıldı
-    public float CarrotSpawnChance = 0.1f; // Carrot spawn Chance eklendi
+    public float rockSpawnChance = 0.5f; // Kaya spawn olasılığı
+    public float coinSpawnChance = 0.6f; // Coin spawn olasılığı
+    public float CarrotSpawnChance = 0.1f; // Carrot spawn şansı
+    public float plusOneHealthSpawnChance = 0.07f; // +1 can spawn şansı
+    public float poisonSpawnChance = 0.07f; // Zehir spawn şansı
+    public float plusTwoHealthSpawnChance = 0.01f; // +2 can spawn şansı
     public float cloudSpawnInterval = 3f;
     public float platformHeight = 1f;
     public float speedFactor = 0.5f;
@@ -38,6 +44,8 @@ public class PlatformSpawner : MonoBehaviour
 
     private string currentMathQuestion;
     private int correctAnswer;
+
+    private List<float> occupiedXPositions = new List<float>(); // Tüm prefab'lar için işgal edilmiş x konumları
 
     private void Awake()
     {
@@ -120,54 +128,92 @@ public class PlatformSpawner : MonoBehaviour
         Instantiate(platformPrefab, nextSpawnPosition, Quaternion.identity);
         nextSpawnPosition += new Vector3(platformWidth, 0, 0);
 
-        // Kaya ve coin spawn işlemi
-        float distanceBetweenObjects = 0.5f; // Nesneler arasındaki minimum mesafe azaltıldı
-        Vector3 rockPosition = GetAvailablePosition(distanceBetweenObjects);
+        // Her prefab için ayrı bir x pozisyonu hesapla
+        Vector3 rockPosition = GetAvailablePosition(1f); // En az 1 birim boşluk
         if (rockPosition != Vector3.zero && Random.value < rockSpawnChance)
         {
             SpawnRock(rockPosition);
         }
 
-        Vector3 coinPosition = GetAvailablePosition(distanceBetweenObjects);
+        Vector3 coinPosition = GetAvailablePosition(1f); // En az 1 birim boşluk
         if (coinPosition != Vector3.zero && Random.value < coinSpawnChance)
         {
             SpawnCoin(coinPosition);
         }
 
-        // Carrot spawn işlemi
-        Vector3 CarrotPosition = GetAvailablePosition(distanceBetweenObjects);
+        Vector3 CarrotPosition = GetAvailablePosition(1f); // En az 1 birim boşluk
         if (CarrotPosition != Vector3.zero && Random.value < CarrotSpawnChance)
         {
             SpawnCarrot(CarrotPosition);
         }
+
+        Vector3 plusOneHealthPosition = GetAvailablePosition(1f); // En az 1 birim boşluk
+        if (plusOneHealthPosition != Vector3.zero && Random.value < plusOneHealthSpawnChance)
+        {
+            SpawnPlusOneHealth(plusOneHealthPosition);
+        }
+
+        Vector3 poisonPosition = GetAvailablePosition(1f); // En az 1 birim boşluk
+        if (poisonPosition != Vector3.zero && Random.value < poisonSpawnChance)
+        {
+            SpawnPoison(poisonPosition);
+        }
+
+        Vector3 plusTwoHealthPosition = GetAvailablePosition(1f); // En az 1 birim boşluk
+        if (plusTwoHealthPosition != Vector3.zero && Random.value < plusTwoHealthSpawnChance)
+        {
+            SpawnPlusTwoHealth(plusTwoHealthPosition);
+        }
+
+        // İşgal edilmiş pozisyonları temizle
+        occupiedXPositions.Clear();
     }
 
     Vector3 GetAvailablePosition(float minDistance)
     {
-        Vector3 position = nextSpawnPosition;
-        bool positionIsValid = true;
+        float xPosition = nextSpawnPosition.x;
+        bool positionIsValid = false;
+        int attempts = 0;
 
-        foreach (Transform child in transform)
+        // Uygun bir pozisyon bulana kadar dene
+        while (!positionIsValid && attempts < 10)
         {
-            float distance = Vector3.Distance(child.position, position);
-            if (distance < minDistance)
+            xPosition = nextSpawnPosition.x + Random.Range(-platformWidth / 2, platformWidth / 2);
+            positionIsValid = true;
+
+            // İşgal edilmiş x konumlarını kontrol et
+            foreach (float occupiedX in occupiedXPositions)
             {
-                positionIsValid = false;
-                break;
+                if (Mathf.Abs(xPosition - occupiedX) < minDistance)
+                {
+                    positionIsValid = false;
+                    break;
+                }
             }
+
+            attempts++;
         }
 
-        return positionIsValid ? position : Vector3.zero;
+        if (positionIsValid)
+        {
+            // Yeni konumu işgal edilmiş konumlar listesine ekle
+            occupiedXPositions.Add(xPosition);
+            return new Vector3(xPosition, nextSpawnPosition.y, nextSpawnPosition.z);
+        }
+
+        return Vector3.zero; // Geçerli bir konum yoksa sıfır döndür
     }
 
     void SpawnRock(Vector3 rockPosition)
     {
+       
         rockPosition.y = manualRock.position.y;
         Instantiate(rockPrefab, rockPosition, Quaternion.identity);
     }
 
     void SpawnCoin(Vector3 coinPosition)
     {
+       
         coinPosition.y = manualCoin.position.y;
 
         int coinCount = Random.Range(2, 5);
@@ -181,8 +227,30 @@ public class PlatformSpawner : MonoBehaviour
 
     void SpawnCarrot(Vector3 CarrotPosition)
     {
+       
         CarrotPosition.y = MevcutCarrotYPosition();
         Instantiate(CarrotPrefab, CarrotPosition, Quaternion.identity);
+    }
+
+    void SpawnPlusOneHealth(Vector3 position)
+    {
+        
+        position.y = manualCoin.position.y;
+        Instantiate(plusOneHealthPrefab, position, Quaternion.identity);
+    }
+
+    void SpawnPoison(Vector3 position)
+    {
+       
+        position.y = manualCoin.position.y;
+        Instantiate(poisonPrefab, position, Quaternion.identity);
+    }
+
+    void SpawnPlusTwoHealth(Vector3 position)
+    {
+        
+        position.y = manualCoin.position.y;
+        Instantiate(plusTwoHealthPrefab, position, Quaternion.identity);
     }
 
     float MevcutCarrotYPosition()

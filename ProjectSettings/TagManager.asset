@@ -11,6 +11,9 @@ TagManager:
   - ScoreText
   - TimerText
   - Carrot
+  - +1 can
+  - zehir
+  - +2 can
   layers:
   - Default
   - TransparentFX

@@ -34,6 +34,27 @@ public class StarManager : MonoBehaviour
         }
     }
 
+    public void DoubleYildizArttir()
+    {
+        if (currentStars < MaxStars) // Maksimum yıldız sayısını aşma
+        {
+            // currentStars'ı iki artır, ancak MaxStars'ı aşma
+            int newStars = Mathf.Min(currentStars + 2, MaxStars);
+
+            // Yıldızları aktif hale getir
+            for (int i = currentStars; i < newStars; i++)
+            {
+                if (i < stars.Count) // Liste sınırlarını kontrol et
+                {
+                    stars[i].SetActive(true);
+                }
+            }
+
+            currentStars = newStars; // currentStars'ı güncelle
+            SaveStars(); // Yıldız sayısını kaydet
+        }
+    }
+
     public void YildizAzalt()
     {
         if (currentStars > 0)
