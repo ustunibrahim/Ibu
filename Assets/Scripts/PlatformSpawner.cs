@@ -8,7 +8,6 @@ public class PlatformSpawner : MonoBehaviour
     public static bool isGameStarted = false;
     public GameObject platformPrefab;
     public GameObject rockPrefab;
-    public GameObject backgroundPrefab;
     public GameObject coinPrefab;
     public GameObject cloudPrefab;
     public GameObject mathBalloonPrefab;
@@ -38,7 +37,6 @@ public class PlatformSpawner : MonoBehaviour
     private float nextCloudSpawnTime;
     private Vector3 nextCloudPosition;
     private Vector3 nextSpawnPosition;
-    private GameObject currentBackground;
     private Rigidbody2D playerRb;
     private StarManager starManager;
 
@@ -62,45 +60,7 @@ public class PlatformSpawner : MonoBehaviour
         nextCloudPosition = cloudPrefab.transform.position;
 
         playerRb = player.GetComponent<Rigidbody2D>();
-
-        currentBackground = Instantiate(backgroundPrefab);
-        Vector3 backgroundPos = currentBackground.transform.position;
-        backgroundPos.y = startPlatform.position.y - platformHeight / 2;
-        currentBackground.transform.position = backgroundPos;
-        AdjustBackgroundToScreen();
-
-        // Arka planın tam ekran olması için RectTransform ayarları
-        RectTransform rectTransform = currentBackground.GetComponent<RectTransform>();
-        if (rectTransform != null)
-        {
-            rectTransform.anchorMin = Vector2.zero;   // Sol alt köşe
-            rectTransform.anchorMax = Vector2.one;    // Sağ üst köşe
-            rectTransform.offsetMin = Vector2.zero;   // İçeriden uzaklık (0)
-            rectTransform.offsetMax = Vector2.zero;   // Dışarıdan uzaklık (0)
-        }
-
         starManager = FindObjectOfType<StarManager>();
-    }
-
-    void AdjustBackgroundToScreen()
-    {
-        if (currentBackground == null) return;
-
-        SpriteRenderer spriteRenderer = currentBackground.GetComponent<SpriteRenderer>();
-        if (spriteRenderer != null)
-        {
-            float worldScreenHeight = Camera.main.orthographicSize * 2f;
-            float worldScreenWidth = worldScreenHeight * Camera.main.aspect;
-
-            Vector2 spriteSize = spriteRenderer.sprite.bounds.size;
-
-            float scaleX = worldScreenWidth / spriteSize.x;
-            float scaleY = worldScreenHeight / spriteSize.y;
-
-            float finalScale = Mathf.Max(scaleX, scaleY);
-
-            currentBackground.transform.localScale = new Vector3(finalScale, finalScale, 1);
-        }
     }
 
     void Update()
@@ -119,7 +79,6 @@ public class PlatformSpawner : MonoBehaviour
             nextCloudSpawnTime = Time.time + cloudSpawnInterval;
         }
 
-        UpdateBackgroundPosition();
         AdjustSpawnIntervalByPlayerSpeed();
     }
 
@@ -206,14 +165,12 @@ public class PlatformSpawner : MonoBehaviour
 
     void SpawnRock(Vector3 rockPosition)
     {
-       
         rockPosition.y = manualRock.position.y;
         Instantiate(rockPrefab, rockPosition, Quaternion.identity);
     }
 
     void SpawnCoin(Vector3 coinPosition)
     {
-       
         coinPosition.y = manualCoin.position.y;
 
         int coinCount = Random.Range(2, 5);
@@ -227,28 +184,24 @@ public class PlatformSpawner : MonoBehaviour
 
     void SpawnCarrot(Vector3 CarrotPosition)
     {
-       
         CarrotPosition.y = MevcutCarrotYPosition();
         Instantiate(CarrotPrefab, CarrotPosition, Quaternion.identity);
     }
 
     void SpawnPlusOneHealth(Vector3 position)
     {
-        
         position.y = manualCoin.position.y;
         Instantiate(plusOneHealthPrefab, position, Quaternion.identity);
     }
 
     void SpawnPoison(Vector3 position)
     {
-       
         position.y = manualCoin.position.y;
         Instantiate(poisonPrefab, position, Quaternion.identity);
     }
 
     void SpawnPlusTwoHealth(Vector3 position)
     {
-        
         position.y = manualCoin.position.y;
         Instantiate(plusTwoHealthPrefab, position, Quaternion.identity);
     }
@@ -424,16 +377,6 @@ public class PlatformSpawner : MonoBehaviour
             list[randomIndex] = temp;
         }
         return list;
-    }
-
-    void UpdateBackgroundPosition()
-    {
-        if (currentBackground != null && player != null)
-        {
-            Vector3 backgroundPos = currentBackground.transform.position;
-            backgroundPos.x = player.position.x;
-            currentBackground.transform.position = backgroundPos;
-        }
     }
 
     void AdjustSpawnIntervalByPlayerSpeed()
