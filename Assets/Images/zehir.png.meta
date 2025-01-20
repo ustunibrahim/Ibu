@@ -173,7 +173,8 @@ TextureImporter:
     secondaryTextures: []
     spriteCustomMetadata:
       entries: []
-    nameFileIdTable: {}
+    nameFileIdTable:
+      zehir_0: -3878445566362279954
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
