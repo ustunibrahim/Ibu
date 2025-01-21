@@ -1,10 +1,10 @@
 fileFormatVersion: 2
-guid: 47d08ead31e9e9b40af2f9e831d66163
+guid: 857d52a424b422e4b92fc0b04932774e
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: 5362554473983019606
-    second: "AnaMen\xFC_0"
+      213: 4836388306454763656
+    second: "Nas\u0131lOynanir_0"
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -139,13 +139,13 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: "AnaMen\xFC_0"
+      name: "Nas\u0131lOynanir_0"
       rect:
         serializedVersion: 2
         x: 0
         y: 0
-        width: 1024
-        height: 768
+        width: 512
+        height: 512
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -154,8 +154,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 65a807ec1ee9b6a40800000000000000
-      internalID: 5362554473983019606
+      spriteID: 888d61a5a8d4e1340800000000000000
+      internalID: 4836388306454763656
       vertices: []
       indices: 
       edges: []
@@ -174,7 +174,7 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      "AnaMen\xFC_0": 5362554473983019606
+      "Nas\u0131lOynanir_0": 4836388306454763656
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
